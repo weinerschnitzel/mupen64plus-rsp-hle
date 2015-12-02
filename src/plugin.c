@@ -23,29 +23,41 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
 
 #include "common.h"
 #include "hle.h"
 #include "hle_internal.h"
 
-#ifndef _PJ64_SPEC
+#if !defined(_PJ64_SPEC)
 #define M64P_PLUGIN_PROTOTYPES 1
 #include "m64p_common.h"
 #include "m64p_plugin.h"
 #include "m64p_types.h"
 #else
+ #if defined(_WIN32)
+#include "./win/win.h"
+#include "./win/resource.h"
+ #else
+  #if defined(USE_GTK)
+#include <gtk/gtk.h>
+  #endif
+ #endif
 #include "Rsp.h"
-#if defined(_WIN32)
+ #if defined(_WIN32)
 #define EXPORT      __declspec(dllexport)
 #define CALL        __cdecl
-#else
+ #else
 #define EXPORT      __attribute__((visibility("default")))
 #define CALL
-#endif
+ #endif
 #endif
 
 #define RSP_HLE_VERSION        0x020500
 #define RSP_PLUGIN_API_VERSION 0x020000
+
+bool AudioHle = FALSE, GraphicsHle = TRUE;
 
 /* local variables */
 static struct hle_t g_hle;
@@ -56,7 +68,7 @@ static void (*l_ProcessRdpList)(void) = NULL;
 static void (*l_ShowCFB)(void) = NULL;
 static void (*l_DebugCallback)(void *, int, const char *) = NULL;
 static void *l_DebugCallContext = NULL;
-#ifndef _PJ64_SPEC
+#if !defined(_PJ64_SPEC)
 static int l_PluginInit = 0;
 #endif
 
@@ -140,7 +152,7 @@ void HleShowCFB(void* UNUSED(user_defined))
 
 
 /* DLL-exported functions */
-#ifndef _PJ64_SPEC
+#if !defined(_PJ64_SPEC)
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle UNUSED(CoreLibHandle), void *Context,
                                      void (*DebugCallback)(void *, int, const char *))
 {
@@ -225,7 +237,7 @@ EXPORT void CALL InitiateRSP(RSP_INFO Rsp_Info, unsigned int* UNUSED(CycleCount)
              NULL);
 
     l_CheckInterrupts = Rsp_Info.CheckInterrupts;
-#ifdef _PJ64_SPEC
+#if defined(_PJ64_SPEC)
     l_ProcessDlistList = Rsp_Info.ProcessDList;
     l_ProcessAlistList = Rsp_Info.ProcessAList;
 #else
@@ -236,7 +248,7 @@ EXPORT void CALL InitiateRSP(RSP_INFO Rsp_Info, unsigned int* UNUSED(CycleCount)
     l_ShowCFB = Rsp_Info.ShowCFB;
 }
 
-#ifdef _PJ64_SPEC
+#if defined(_PJ64_SPEC)
 EXPORT void CALL CloseDLL(void)
 {
     /* do nothing */
@@ -245,14 +257,58 @@ EXPORT void CALL GetDllInfo(PLUGIN_INFO * PluginInfo)
 {
     PluginInfo->Version = 0x0101;
 	PluginInfo->Type = PLUGIN_TYPE_RSP;
-	//strcpy(PluginInfo->Name, "Mupen64Plus HLE RSP Plugin");
+	strcpy(PluginInfo->Name, "Mupen64Plus HLE RSP Plugin");
 	PluginInfo->NormalMemory = 1;
 	PluginInfo->MemoryBswaped = 1;
 }
-EXPORT void CALL DllConfig(int hWnd)
+EXPORT void CALL DllConfig(HWND hParent)
 {
-    /* do nothing */
+ #if defined(_WIN32)
+		DialogBox(dll_hInstance,
+			MAKEINTRESOURCE(IDD_RSPCONFIG), hParent, ConfigDlgProc);
+ #endif
 }
+
+EXPORT void CALL DllAbout(int hParent)
+{
+ #if defined(_WIN32)
+	MessageBox(NULL, "Mupen64Plus HLE RSP plugin v2.5 for Zilmar Spec Emulators", "M64P RSP HLE", MB_OK);
+ #else
+ #if defined(USE_GTK)
+	char tMsg[256];
+	GtkWidget *dialog, *label, *okay_button;
+
+	dialog = gtk_dialog_new();
+	sprintf(tMsg, "Mupen64Plus HLE RSP plugin v2.5 for Zilmar Spec Emulators");
+	label = gtk_label_new(tMsg);
+	okay_button = gtk_button_new_with_label("OK");
+
+	gtk_signal_connect_object(GTK_OBJECT(okay_button), "clicked",
+		GTK_SIGNAL_FUNC(gtk_widget_destroy),
+		GTK_OBJECT(dialog));
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->action_area),
+		okay_button);
+
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox),
+		label);
+	gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
+	gtk_widget_show_all(dialog);
+ #else
+	char tMsg[256];
+	sprintf(tMsg, "Mupen64Plus HLE RSP plugin v2.5 for Zilmar Spec Emulators");
+	fprintf(stderr, "About\n%s\n", tMsg);
+ #endif
+
+ #endif
+}
+
+EXPORT void CALL DllTest(int hParent)
+{
+ #if defined(_WIN32)
+	MessageBox(NULL, "No Test For You.", "No Test", MB_OK);
+ #endif
+}
+
 #endif
 
 EXPORT void CALL RomClosed(void)
