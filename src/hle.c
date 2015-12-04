@@ -68,6 +68,7 @@ static void dump_unknown_non_task(struct hle_t* hle, unsigned int sum);
 
 /* local variables */
 static const bool FORWARD_AUDIO = false, FORWARD_GFX = true;
+extern bool AudioHle;
 
 /* Global functions */
 void hle_init(struct hle_t* hle,
@@ -265,7 +266,7 @@ static bool try_fast_task_dispatching(struct hle_t* hle)
         break;
 
     case 2:
-        if (FORWARD_AUDIO) {
+        if (AudioHle) {
             HleProcessAlistList(hle->user_defined);
             return true;
         } else if (try_fast_audio_dispatching(hle))

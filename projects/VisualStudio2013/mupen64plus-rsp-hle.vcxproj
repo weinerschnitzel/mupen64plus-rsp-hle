@@ -88,8 +88,9 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\mupen64plus-core\src\api;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;inline=__inline;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_PJ64_SPEC;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;inline=__inline;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -125,8 +126,9 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\..\mupen64plus-core\src\api;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;inline=__inline;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_PJ64_SPEC;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;inline=__inline;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -173,6 +175,8 @@
     <ClCompile Include="..\..\src\mp3.c" />
     <ClCompile Include="..\..\src\musyx.c" />
     <ClCompile Include="..\..\src\plugin.c" />
+    <ClCompile Include="..\..\src\win\Config.c" />
+    <ClCompile Include="..\..\src\win\win.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\alist.h" />
@@ -183,7 +187,14 @@
     <ClInclude Include="..\..\src\hle_external.h" />
     <ClInclude Include="..\..\src\hle_internal.h" />
     <ClInclude Include="..\..\src\memory.h" />
+    <ClInclude Include="..\..\src\Rsp.h" />
     <ClInclude Include="..\..\src\ucodes.h" />
+    <ClInclude Include="..\..\src\win\Config.h" />
+    <ClInclude Include="..\..\src\win\resource.h" />
+    <ClInclude Include="..\..\src\win\win.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\src\win\res.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
