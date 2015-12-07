@@ -179,7 +179,7 @@ EXPORT void CALL DllConfig(HWND hParent)
 {
 #if defined(_WIN32)
 		DialogBox(dll_hInstance,
-			MAKEINTRESOURCE(IDD_RSPCONFIG), hParent, ConfigDlgProc);
+			MAKEINTRESOURCE(IDD_RSPCONFIG), hParent, (DLGPROC)ConfigDlgProc);
 #endif
 }
 
