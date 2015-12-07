@@ -72,8 +72,11 @@ static void DebugMessage(int level, const char *message, va_list args)
 /* Global functions needed by HLE core */
 void HleVerboseMessage(void* UNUSED(user_defined), const char *message, ...)
 {
-#if defined(_WIN32)
+#if defined(_WIN32) && defined(_DEBUG)
+	// These can get annoying. 
+ #if 0
 	MessageBox(NULL, message, "HLE Verbose Message", MB_OK);
+ #endif
 #endif
 }
 
@@ -86,7 +89,7 @@ void HleErrorMessage(void* UNUSED(user_defined), const char *message, ...)
 
 void HleWarnMessage(void* UNUSED(user_defined), const char *message, ...)
 {
-#if defined(_WIN32)
+#if defined(_WIN32) && defined(_DEBUG)
 	MessageBox(NULL, message, "HLE Warning Message", MB_OK);
 #endif
 }
