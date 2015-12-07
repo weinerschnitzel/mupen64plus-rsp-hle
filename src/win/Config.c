@@ -1,7 +1,7 @@
 #include "win.h"
 #include "Config.h"
 
-#define CfgFileName "mupen64_rsp_hle.cfg"
+#define CfgFileName "mupen64plus_rsp_hle.cfg"
 
 ////////////////////// Service functions and structures ////////////////////////
 
