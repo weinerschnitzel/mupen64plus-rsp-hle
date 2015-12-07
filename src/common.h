@@ -34,6 +34,15 @@
 #define inline __inline
 #endif
 
+/* Dll function linking */
+#if defined(_WIN32)
+#define EXPORT      __declspec(dllexport)
+#define CALL        __cdecl
+#else
+#define EXPORT      __attribute__((visibility("default")))
+#define CALL
+#endif
+
 /* Plugin types */
 #define PLUGIN_TYPE_RSP			1
 #define PLUGIN_TYPE_GFX			2
@@ -55,7 +64,6 @@ typedef struct
 						bswap on a dword (32 bits) boundry */
 
 } PLUGIN_INFO;
-
 
 #endif
 
