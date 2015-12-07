@@ -136,7 +136,7 @@ void HleShowCFB(void* UNUSED(user_defined))
 
 
 /* DLL-exported functions */
-EXPORT uint32_t CALL DoRspCycles(uint32_t Cycles)
+EXPORT unsigned long CALL DoRspCycles(unsigned long Cycles)
 {
     hle_execute(&g_hle);
     return Cycles;
@@ -197,7 +197,7 @@ EXPORT void CALL DllConfig(HWND hParent)
 #endif
 }
 
-EXPORT void CALL DllAbout(int hParent)
+EXPORT void CALL DllAbout(HWND hParent)
 {
 #if defined(_WIN32)
 	MessageBox(NULL, "Mupen64Plus HLE RSP plugin v2.5 for Zilmar Spec Emulators", "M64P RSP HLE", MB_OK);
@@ -229,7 +229,7 @@ EXPORT void CALL DllAbout(int hParent)
 #endif
 }
 
-EXPORT void CALL DllTest(int hParent)
+EXPORT void CALL DllTest(HWND hParent)
 {
 #if defined(_WIN32)
 	MessageBox(NULL, "No Test For You.", "No Test", MB_OK);

@@ -65,5 +65,9 @@ typedef struct
 
 } PLUGIN_INFO;
 
+#ifndef _WIN32
+typedef int HWND;
+#endif
+
 #endif
 
