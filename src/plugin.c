@@ -55,20 +55,6 @@ static void (*l_ShowCFB)(void) = NULL;
 static void (*l_DebugCallback)(void *, int, const char *) = NULL;
 static void *l_DebugCallContext = NULL;
 
-
-/* local function */
-static void DebugMessage(int level, const char *message, va_list args)
-{
-    char msgbuf[1024];
-
-    if (l_DebugCallback == NULL)
-        return;
-
-    vsprintf(msgbuf, message, args);
-
-    (*l_DebugCallback)(l_DebugCallContext, level, msgbuf);
-}
-
 /* Global functions needed by HLE core */
 void HleVerboseMessage(void* UNUSED(user_defined), const char *message, ...)
 {
