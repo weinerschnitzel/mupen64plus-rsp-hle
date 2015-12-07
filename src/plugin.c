@@ -80,26 +80,23 @@ static void DebugMessage(int level, const char *message, va_list args)
 /* Global functions needed by HLE core */
 void HleVerboseMessage(void* UNUSED(user_defined), const char *message, ...)
 {
-    va_list args;
-    va_start(args, message);
-    //DebugMessage(M64MSG_VERBOSE, message, args);
-    va_end(args);
+#if defined(_WIN32)
+	MessageBox(NULL, message, "HLE Verbose Message", MB_OK);
+#endif
 }
 
 void HleErrorMessage(void* UNUSED(user_defined), const char *message, ...)
 {
-    va_list args;
-    va_start(args, message);
-    //DebugMessage(M64MSG_ERROR, message, args);
-    va_end(args);
+#if defined(_WIN32)
+	MessageBox(NULL, message, "HLE Error Message", MB_OK);
+#endif
 }
 
 void HleWarnMessage(void* UNUSED(user_defined), const char *message, ...)
 {
-    va_list args;
-    va_start(args, message);
-    //DebugMessage(M64MSG_WARNING, message, args);
-    va_end(args);
+#if defined(_WIN32)
+	MessageBox(NULL, message, "HLE Warning Message", MB_OK);
+#endif
 }
 
 void HleCheckInterrupts(void* UNUSED(user_defined))
@@ -187,6 +184,7 @@ EXPORT void CALL CloseDLL(void)
 {
     /* do nothing */
 }
+
 EXPORT void CALL GetDllInfo(PLUGIN_INFO * PluginInfo)
 {
     PluginInfo->Version = 0x0101;
@@ -195,6 +193,7 @@ EXPORT void CALL GetDllInfo(PLUGIN_INFO * PluginInfo)
 	PluginInfo->NormalMemory = 1;
 	PluginInfo->MemoryBswaped = 1;
 }
+
 EXPORT void CALL DllConfig(HWND hParent)
 {
 #if defined(_WIN32)
