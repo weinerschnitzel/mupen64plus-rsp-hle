@@ -29,29 +29,23 @@
 #include "common.h"
 #include "hle.h"
 #include "hle_internal.h"
+#include "Rsp.h"
 
-#if !defined(_PJ64_SPEC)
-#define M64P_PLUGIN_PROTOTYPES 1
-#include "m64p_common.h"
-#include "m64p_plugin.h"
-#include "m64p_types.h"
-#else
- #if defined(_WIN32)
+#if defined(_WIN32)
 #include "./win/win.h"
 #include "./win/resource.h"
- #else
+#else
   #if defined(USE_GTK)
 #include <gtk/gtk.h>
   #endif
- #endif
-#include "Rsp.h"
- #if defined(_WIN32)
+#endif
+
+#if defined(_WIN32)
 #define EXPORT      __declspec(dllexport)
 #define CALL        __cdecl
- #else
+#else
 #define EXPORT      __attribute__((visibility("default")))
 #define CALL
- #endif
 #endif
 
 #define RSP_HLE_VERSION        0x020500
@@ -68,9 +62,7 @@ static void (*l_ProcessRdpList)(void) = NULL;
 static void (*l_ShowCFB)(void) = NULL;
 static void (*l_DebugCallback)(void *, int, const char *) = NULL;
 static void *l_DebugCallContext = NULL;
-#if !defined(_PJ64_SPEC)
-static int l_PluginInit = 0;
-#endif
+
 
 /* local function */
 static void DebugMessage(int level, const char *message, va_list args)
@@ -152,58 +144,6 @@ void HleShowCFB(void* UNUSED(user_defined))
 
 
 /* DLL-exported functions */
-#if !defined(_PJ64_SPEC)
-EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle UNUSED(CoreLibHandle), void *Context,
-                                     void (*DebugCallback)(void *, int, const char *))
-{
-    if (l_PluginInit)
-        return M64ERR_ALREADY_INIT;
-
-    /* first thing is to set the callback function for debug info */
-    l_DebugCallback = DebugCallback;
-    l_DebugCallContext = Context;
-
-    /* this plugin doesn't use any Core library functions (ex for Configuration), so no need to keep the CoreLibHandle */
-
-    l_PluginInit = 1;
-    return M64ERR_SUCCESS;
-}
-
-EXPORT m64p_error CALL PluginShutdown(void)
-{
-    if (!l_PluginInit)
-        return M64ERR_NOT_INIT;
-
-    /* reset some local variable */
-    l_DebugCallback = NULL;
-    l_DebugCallContext = NULL;
-
-    l_PluginInit = 0;
-    return M64ERR_SUCCESS;
-}
-
-EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType, int *PluginVersion, int *APIVersion, const char **PluginNamePtr, int *Capabilities)
-{
-    /* set version info */
-    if (PluginType != NULL)
-        *PluginType = M64PLUGIN_RSP;
-
-    if (PluginVersion != NULL)
-        *PluginVersion = RSP_HLE_VERSION;
-
-    if (APIVersion != NULL)
-        *APIVersion = RSP_PLUGIN_API_VERSION;
-
-    if (PluginNamePtr != NULL)
-        *PluginNamePtr = "Hacktarux/Azimer High-Level Emulation RSP Plugin";
-
-    if (Capabilities != NULL)
-        *Capabilities = 0;
-
-    return M64ERR_SUCCESS;
-}
-#endif
-
 EXPORT uint32_t CALL DoRspCycles(uint32_t Cycles)
 {
     hle_execute(&g_hle);
@@ -237,18 +177,12 @@ EXPORT void CALL InitiateRSP(RSP_INFO Rsp_Info, unsigned int* UNUSED(CycleCount)
              NULL);
 
     l_CheckInterrupts = Rsp_Info.CheckInterrupts;
-#if defined(_PJ64_SPEC)
     l_ProcessDlistList = Rsp_Info.ProcessDList;
     l_ProcessAlistList = Rsp_Info.ProcessAList;
-#else
-    l_ProcessDlistList = Rsp_Info.ProcessDlistList;
-    l_ProcessAlistList = Rsp_Info.ProcessAlistList;
-#endif
     l_ProcessRdpList = Rsp_Info.ProcessRdpList;
     l_ShowCFB = Rsp_Info.ShowCFB;
 }
 
-#if defined(_PJ64_SPEC)
 EXPORT void CALL CloseDLL(void)
 {
     /* do nothing */
@@ -263,17 +197,17 @@ EXPORT void CALL GetDllInfo(PLUGIN_INFO * PluginInfo)
 }
 EXPORT void CALL DllConfig(HWND hParent)
 {
- #if defined(_WIN32)
+#if defined(_WIN32)
 		DialogBox(dll_hInstance,
 			MAKEINTRESOURCE(IDD_RSPCONFIG), hParent, ConfigDlgProc);
- #endif
+#endif
 }
 
 EXPORT void CALL DllAbout(int hParent)
 {
- #if defined(_WIN32)
+#if defined(_WIN32)
 	MessageBox(NULL, "Mupen64Plus HLE RSP plugin v2.5 for Zilmar Spec Emulators", "M64P RSP HLE", MB_OK);
- #else
+#else
  #if defined(USE_GTK)
 	char tMsg[256];
 	GtkWidget *dialog, *label, *okay_button;
@@ -298,18 +232,15 @@ EXPORT void CALL DllAbout(int hParent)
 	sprintf(tMsg, "Mupen64Plus HLE RSP plugin v2.5 for Zilmar Spec Emulators");
 	fprintf(stderr, "About\n%s\n", tMsg);
  #endif
-
- #endif
+#endif
 }
 
 EXPORT void CALL DllTest(int hParent)
 {
- #if defined(_WIN32)
+#if defined(_WIN32)
 	MessageBox(NULL, "No Test For You.", "No Test", MB_OK);
- #endif
-}
-
 #endif
+}
 
 EXPORT void CALL RomClosed(void)
 {
