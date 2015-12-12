@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <stdbool.h>
 
-BOOL CALLBACK ConfigDlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK ConfigDlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam);
 HINSTANCE dll_hInstance;
 void SaveSettings();
 void LoadSettings();
