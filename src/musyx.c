@@ -718,7 +718,7 @@ static void mix_voice_samples(struct hle_t* hle, musyx_t *musyx,
     for (i = 0; i < SUBFRAME_SIZE; ++i) {
         /* update sample and lut pointers and then pitch_accu */
         const int16_t *lut = (RESAMPLE_LUT + ((pitch_accu & 0xfc00) >> 8));
-        __int64 dist;
+        int64_t dist;
         int16_t v;
 
         sample += (pitch_accu >> 16);
